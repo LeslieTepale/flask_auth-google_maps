@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+
+    <div class="row mt-5">
+
+         <div class="border border-1 border-dark mx-auto p-4">
+             <h2>User profile</h2>
+                Location Name: {{ location.title }}
+                <pre>{{ location.latitude }}</pre>
+                <pre>{{ location.longitude }}</pre>
+                <pre>{{ location.population }}</pre>
+         </div>
+    </div>
+
+{% endblock %}
