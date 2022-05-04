@@ -8,7 +8,6 @@ class csv_upload(FlaskForm):
 
 class location_register_form(FlaskForm):
     title = TextAreaField('Title', [validators.DataRequired(),], description="Enter a location name")
-
     longitude = TextAreaField('Longitude', [validators.DataRequired(),], description="Enter a location longitude")
     latitude = TextAreaField('Latitude', [ validators.DataRequired(),], description="Enter a location latitude")
     population = TextAreaField('Population', [validators.DataRequired(),], description="Enter a location population")
@@ -17,10 +16,10 @@ class location_register_form(FlaskForm):
 class location_edit_form(FlaskForm):
     title = TextAreaField('Title', [validators.length(min=6, max=300)],
                           description="Please add location title")
-    longitude = TextAreaField('Longitude', [validators.length(min=6, max=300)],
+    longitude = TextAreaField('Longitude', [validators.length(min=1, max=300)],
                           description="Please add location longitude")
-    latitude = TextAreaField('Latitude', [validators.length(min=6, max=300)],
+    latitude = TextAreaField('Latitude', [validators.length(min=1, max=300)],
                           description="Please add location latitude")
-    population = TextAreaField('Population', [validators.length(min=6, max=300)],
+    population = TextAreaField('Population', [validators.length(min=1, max=300)],
                           description="Please add location population")
     submit = SubmitField()

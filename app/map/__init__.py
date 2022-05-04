@@ -103,13 +103,13 @@ def retrieve_location(locations_id):
     return render_template('location_view.html', location=location)
 
 
-@map.route('/locations/<int:locations_id>/edit', methods=['POST', 'GET'])
+@map.route('/locations/<int:location_id>/edit', methods=['POST', 'GET'])
 @login_required
-def edit_locations(locations_id):
-    location = Location.query.get(locations_id)
+def edit_locations(location_id):
+    location = Location.query.get(location_id)
     form = location_edit_form(obj=location)
     if form.validate_on_submit():
-        location.title = form.data.title
+        location.title = form.title.data
         db.session.add(location)
         db.session.commit()
         flash('Location Edited Successfully', 'success')
@@ -123,7 +123,7 @@ def edit_locations(locations_id):
 def add_location():
     form = location_register_form()
     if form.validate_on_submit():
-        location = Location.query.filter_by(email=form.email.data).first()
+        location = Location.query.filter_by(title=form.title.data).first()
         if location is None:
             location = Location(title=form.title.data, longitude=form.longitude.data, latitude=form.latitude.data, population=form.population.data)
             db.session.add(location)

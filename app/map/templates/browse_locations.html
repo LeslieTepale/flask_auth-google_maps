@@ -10,7 +10,7 @@
         <h2>Browse: Locations</h2>
         {{ render_table(data,titles,show_actions=True, table_classes='table-striped', header_classes='thead-dark', responsive=True,
         responsive_class='table-responsive-sm', model=Location,
-        delete_url=delete_url) }}
+        delete_url=delete_url, new_url=add_url, edit_url=edit_url) }}
 
         {% from 'bootstrap5/pagination.html' import render_pagination %}
 
