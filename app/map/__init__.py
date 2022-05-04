@@ -16,8 +16,7 @@ from flask import Response
 
 
 
-map = Blueprint('map', __name__,
-                        template_folder='templates')
+map = Blueprint('map', __name__,template_folder='templates')
 
 @map.route('/locations', methods=['GET'], defaults={"page": 1})
 @map.route('/locations/<int:page>', methods=['POST','GET'])
@@ -27,18 +26,21 @@ def browse_locations(page):
     pagination = Location.query.paginate(page, per_page, error_out=False)
     data = pagination.items
     try:
-        return render_template('browse_locations.html',data=data,pagination=pagination)
+        titles = [('number', '#'), ('title', 'Title'), ('longitude', 'Longitude'), ('latitude', 'Latitude'),
+                  ('population', 'Population'), ('user_id', 'User Id')]
+        retrieve_url = ('map.retrieve_location', [('location_id', ':id')])
+        edit_url = ('map.edit_locations', [('location_id', ':id')])
+        add_url = url_for('map.add_location')
+        delete_url = ('map.delete_location', [('location_id', ':id')])
+        return render_template('browse_locations.html',data=data,pagination=pagination, titles=titles, model=Location, add_url=add_url,
+                               edit_url=edit_url,
+                               delete_url=delete_url,
+                            Location=Location, record_type="Locations")
     except TemplateNotFound:
         abort(404)
-    titles = [('number', '#'), ('title', 'Title'), ('longitude', 'Longitude'), ('latitude', 'Latitude'), ('population', 'Population'), ('user_id', 'User Id')]
-    retrieve_url = ('map.retrieve_location', [('location_id', ':id')])
-    edit_url = ('map.edit_location', [('location_id', ':id')])
-    add_url = url_for('map.add_location')
-    delete_url = ('map.delete_location', [('location_id', ':id')])
-    return render_template('browse_locations.html', titles=titles, model=Location, add_url=add_url, edit_url=edit_url, delete_url=delete_url,
-                           data=data, Location=Location, record_type="Locations")
 
-@map.route('/locations_datatables/', methods=['GET'])
+
+@map.route('/locations_datatables/', methods=['POST','GET'])
 def browse_locations_datatables():
     data = Location.query.all()
     try:
@@ -94,17 +96,17 @@ def location_upload():
 
 # start of new code
 
-@map.route('/locations/<int:location_id>')
+@map.route('/locations/<int:locations_id>')
 @login_required
-def retrieve_location(location_id):
-    location = Location.query.get(location_id)
+def retrieve_location(locations_id):
+    location = Location.query.get(locations_id)
     return render_template('location_view.html', location=location)
 
 
-@map.route('/locations/<int:location_id>/edit', methods=['POST', 'GET'])
+@map.route('/locations/<int:locations_id>/edit', methods=['POST', 'GET'])
 @login_required
-def edit_locations(location_id):
-    location = Location.query.get(location_id)
+def edit_locations(locations_id):
+    location = Location.query.get(locations_id)
     form = location_edit_form(obj=location)
     if form.validate_on_submit():
         location.title = form.data.title
@@ -123,8 +125,7 @@ def add_location():
     if form.validate_on_submit():
         location = Location.query.filter_by(email=form.email.data).first()
         if location is None:
-            location = Location
-            location(title=form.title.data, longitude=form.longitude.data, latitude=form.latitude.data, population=form.population.data)
+            location = Location(title=form.title.data, longitude=form.longitude.data, latitude=form.latitude.data, population=form.population.data)
             db.session.add(location)
             db.session.commit()
             flash('Congratulations, you just created a location', 'success')
