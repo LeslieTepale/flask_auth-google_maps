@@ -19,7 +19,7 @@ map = Blueprint('map', __name__,
                         template_folder='templates')
 
 @map.route('/locations', methods=['GET'], defaults={"page": 1})
-@map.route('/locations/<int:page>', methods=['GET'])
+@map.route('/locations/<int:page>', methods=['POST','GET'])
 def browse_locations(page):
     page = page
     per_page = 10
@@ -29,10 +29,11 @@ def browse_locations(page):
         return render_template('browse_locations.html',data=data,pagination=pagination)
     except TemplateNotFound:
         abort(404)
+    retrieve_url = ('map.retrieve_location', [('location_id', ':id')])
     edit_url = ('map.edit_location', [('location_id', ':id')])
     add_url = url_for('map.add_location')
     delete_url = ('map.delete_location', [('location_id', ':id')])
-    return render_template('browse.html', titles=titles, add_url=add_url, edit_url=edit_url, delete_url=delete_url,
+    return render_template('browse.html', add_url=add_url, edit_url=edit_url, delete_url=delete_url,
                            retrieve_url=retrieve_url, data=data, Location=Location, record_type="Locations")
 
 @map.route('/locations_datatables/', methods=['GET'])
@@ -108,7 +109,7 @@ def edit_locations(location_id):
     location = Location.query.get(location_id)
     form = location_edit_form(obj=location)
     if form.validate_on_submit():
-        location.title = form.title.data
+        location.title = form.data.title
         db.session.add(location)
         db.session.commit()
         flash('Location Edited Successfully', 'success')
