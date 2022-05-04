@@ -112,7 +112,7 @@ def edit_locations(location_id):
         location.title = form.title.data
         db.session.add(location)
         db.session.commit()
-        flash('Location Edited Successfully', 'success')
+        flash('Locations Edited Successfully', 'success')
         current_app.logger.info("edited a location")
         return redirect(url_for('map.browse_locations'))
     return render_template('location_edit.html', form=form)
